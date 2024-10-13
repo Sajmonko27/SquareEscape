@@ -1,0 +1,149 @@
+* {
+    font-family: 'roboto';
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    pointer-events: none;
+    background-color: #b2b2b2;
+    
+}
+
+/* menu */
+#menu {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+#menu-column {
+    width: 512px;
+}
+#menu-list {
+    padding-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+#menu-buttons {
+    width: 160px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px    ;
+}
+#menu-buttons button {
+    width: 100%;
+    height: 28px;
+}
+
+/* game */
+
+#game {
+    display: none;
+}
+
+.square {
+    width: 30px;
+    height: 30px;
+    border: black solid 2px;
+}
+.row {
+    display: flex;
+}
+
+.obstacle {
+    background-color: black;
+}
+
+#timer {
+    position: absolute;
+    z-index: 99;
+    width: 101px;
+    height: 67px;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/* game Animation */
+
+#gameAnimation {
+    width: 100%;
+    height: 100vh; 
+    display: none;
+    background-color: transparent;
+    pointer-events: none;
+    position: absolute;
+    opacity: 1;
+}
+
+/* levels */
+
+#levels {
+    width: 100%;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+}
+#levels-column {
+    width: 512px;
+}
+#levels-list {
+    padding-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+#levels-buttons {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 4px;
+}
+#levels-buttons button {
+    width: 167px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.menu-btn {
+    width: 200px;
+    height: 32px;
+    text-align: center;
+    margin-top: 16px;
+    margin-left: 156px;
+}
+
+/* tutorial */
+
+#tutorial {
+    width: 100%;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+}
+#tutorial-column {
+    width: 512px;
+}
+#tutorial-list {
+    padding-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+#tutorial-image {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 4px;
+}
+#levels-buttons button {
+    width: 167px;
+    height: 85px;
+}
