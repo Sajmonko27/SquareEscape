@@ -50,10 +50,10 @@ levels = [
         timeLimit: 20,
         cords: [
             ".......x.w.",
-            "...x...x...",
-            "...x...x...",
-            ".p.x...x...",
-            "...x...x...",
+            "...x.......",
+            "...x.......",
+            ".p.x...r...",
+            "...x.......",
             "...x.......",
         ]
     },
@@ -235,6 +235,10 @@ function drawLevel(level) {
                 gateB.src = "cross.png"
                 square.appendChild(gateB);
             }
+            if (symbol === "r") {
+                square.className = "square rEnemy";
+                square.style.backgroundColor = "red"
+            }
 
             rowElement.appendChild(square);
         }
@@ -267,13 +271,14 @@ let intervalId;
 function gameClock(t) {
     console.log(t);
     let remainingTime = t * 100;
+    let timerId, secondId;
 
-    intervalId = setInterval(function() {
+    function updateTimer() {
         let seconds = Math.floor(remainingTime / 100);
-        let houndrets = remainingTime % 100;
-
+        let hundreds = remainingTime % 100;
         var timerText = document.getElementById("timerText");
-        timerText.innerHTML = `${seconds}.${houndrets}s`;
+        timerText.innerHTML = `${seconds}.${hundreds}s`;
+        
         if (seconds < 6) {
             timerText.style.color = "green";
             if (seconds < 4) {
@@ -283,14 +288,47 @@ function gameClock(t) {
                 timerText.style.color = "red";
             }
         }
+    }
 
+    function runEverySecond() {
+        console.log("running every second!")
+        var rEnemies = document.getElementsByClassName("rEnemy");
+        for (let i = 0; i < rEnemies.length; i++) {
+            let enemyStartPosition = rEnemies[i].id;
+            let enemyStartElement = rEnemies[i];
+            let parts = enemyStartPosition.split('-');
+            let startX = parseInt(parts[1]);
+            let startY = parseInt(parts[2]);
+
+            let enemyEndPosition = `square-${startX}-${startY - 1}`;
+            let endPosition = document.getElementById(enemyEndPosition);
+
+            endPosition.style.backgroundColor = "red";
+            endPosition.classList.add("rEnemy");
+            
+            console.log("End = ", endPosition);
+            console.log("End Class", endPosition.className);
+
+            rEnemies[i].style.backgroundColor = "purple";
+            rEnemies[i].className = "square";
+            console.log("Start = ", rEnemies[i]);
+        }
+    }
+
+    timerId = setInterval(function() {
+        updateTimer();
         remainingTime--;
-        if (remainingTime <0) {
+
+        if (remainingTime < 0) {
             killPlayer("red");
-            clearInterval(intervalId);
+            clearInterval(timerId);
+            clearInterval(secondId);
+            var timerText = document.getElementById("timerText");
             timerText.style.color = "black";
         }
-    })
+    }, 10);
+
+    secondId = setInterval(runEverySecond, 1000);
 }
 
 function movePlayer() {
@@ -456,6 +494,10 @@ function checkCollision() {
         //}
     }
     if (playerSqr.className === "square keyBgate" && keyBpickedUp === false) {
+        clearInterval(intervalId);
+        killPlayer("red");
+    }
+    if (playerSqr.className === "square rEnemy") {
         clearInterval(intervalId);
         killPlayer("red");
     }
