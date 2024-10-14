@@ -27,6 +27,11 @@
     display: flex;
     flex-direction: column;
 }
+#menu-list h4{
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px;
+}
 #menu-buttons {
     width: 160px;
     justify-content: center;
@@ -177,4 +182,30 @@
     display: flex;
     flex-wrap: wrap; 
     justify-content: space-between;
+}
+.settings-keybind {
+    width: 360px;
+    padding-top: 8px;
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between; 
+}
+
+/* credits */
+
+#credits {
+    width: 100%;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+}
+#credits-column {
+    width: 512px;
+}
+#credits-list {
+    padding-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }

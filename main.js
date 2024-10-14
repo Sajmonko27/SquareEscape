@@ -5,6 +5,7 @@ const timerElement = document.getElementById("timer");
 const levelsBtn = document.getElementById("menu-btn-levels");
 const tutorialBtn = document.getElementById("menu-btn-tutorial");
 const settingsBtn = document.getElementById("menu-btn-settings");
+const creditsBtn = document.getElementById("menu-btn-credits");
 
 const menuBtns = document.querySelectorAll(".menu-btn");
 
@@ -13,6 +14,7 @@ const menuPage = document.getElementById("menu");
 const levelsPage = document.getElementById("levels");
 const tutorialPage = document.getElementById("tutorial");
 const settingsPage = document.getElementById("settings");
+const creditsPage = document.getElementById("credits");
 const gameAniPage = document.getElementById("gameAnimation");
 
 var playerX = null;
@@ -100,13 +102,81 @@ levels = [
             ".........",
         ]
     },
+    {
+        levelNum: 6,
+        timeLimit: 32,
+        cords: [
+            "....x..........x.x.x..w",
+            "....x.xxxx....x...x....",
+            "....x....x....x.x..x...",
+            ".p...xxx..x...x..x.xbxx",
+            "xx.xx...x.x...xx.x.x...",
+            "ax....x...x...x..x...x.",
+            "..x.xx.xxx....x..x.xx..",
+            "x...xc.x.......x.x.....",
+            "xxx.xx...x.....d.x.x.xx",
+            
+        ]
+    },
+    {
+        levelNum: 7,
+        timeLimit: 22,
+        cords: [
+            "axc........x.x.w",
+            "..xuxuxu.u....x.",
+            "...x.x.x..uxu.xd",
+            ".p....u..u...x..",
+            "...xuxxx..ux..x.",
+            "..xxxxxx.u..x...",
+            ".xxxxxxxx.uu.bxx",
+        ]
+    },
+    {
+        levelNum: 8,
+        timeLimit: 18,
+        cords: [
+            "................................",
+            "................................",
+            "................b...............",
+            ".p..............................",
+            "................................",
+            "..xxxxxxx......................",
+            "x.......xx.....................",
+            "x.uuuuuuax......................",
+            ".xxxxxxxx.......................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            "................................",
+            
+        ]
+    },
+    {
+        levelNum: 9,
+        timeLimit: 18,
+        cords: [
+            "......axw",
+            "...xxxxx.",
+            "...x...x.",
+            ".p.x.x.x.",
+            "...xcx.x.",
+            "...xxx.d.",
+            "...b...x.",
+            "...xxxxxx",
+            ".........",
+        ]
+    },
 ];
 
 // functions:
 // ui functions:
 
 function hideButtons() {
-    for (var i = levelCompleted + 1; i <= 10; i++) {
+    for (var i = levelCompleted + 8; i <= 10; i++) {
         var btn = document.getElementById(`levelbtn-${i}`);
         if (btn) {
             btn.className = "hidden";
@@ -147,6 +217,7 @@ menuBtns.forEach(function(menuBtn) {
         levelsPage.style.display = "none";
         tutorialPage.style.display = "none";
         settingsPage.style.display = "none";
+        creditsPage.style.display = "none";
     });
 });
 
@@ -160,12 +231,18 @@ settingsBtn.addEventListener('click', function() {
     settingsPage.style.display = "flex";
 })
 
+creditsBtn.addEventListener('click', function() {
+    menuPage.style.display = "none";
+    creditsPage.style.display = "flex";
+})
+
 // settings functions 
 
 const difSlider = document.getElementById('difficulty-slider');
 const difText = document.getElementById('difficulty-text');
 
 function updateDifficulty() {
+    console.log("what the sigma")
     const value = difSlider.value;
 
     if (value == 1) {
@@ -185,13 +262,13 @@ difSlider.addEventListener('input', updateDifficulty);
 const opaSlider = document.getElementById('opacity-slider');
 const opaText = document.getElementById('opacity-text');
 
-function updateDifficulty() {
+function updateOpacity() {
     const value = opaSlider.value;
     opaText.textContent = 'Timer opacity: ' + value + "%";
     timerOpacity = value;
 }
 
-opaSlider.addEventListener('input', updateDifficulty);
+opaSlider.addEventListener('input', updateOpacity);
 
 // game functions
 
@@ -231,7 +308,7 @@ function drawLevel(level) {
                 console.log(y);
                 console.log(winSqrY);
                 console.log(x);
-                console.log(winSqrX);
+                console.log("da winX ist:" + winSqrX);
             }
             if (symbol === "a") {
                 square.style.backgroundColor = "#ADD8E6";
@@ -271,6 +348,14 @@ function drawLevel(level) {
             }
             if (symbol === "u") {
                 square.className = "square uEnemy U";
+                square.style.backgroundColor = "red"
+            }
+            if (symbol === "r") {
+                square.className = "square rEnemy R";
+                square.style.backgroundColor = "red"
+            }
+            if (symbol === "l") {
+                square.className = "square rEnemy L";
                 square.style.backgroundColor = "red"
             }
 
@@ -325,35 +410,35 @@ function gameClock(t) {
 
     function runEverySecond() {
         console.log("running every second!")
-        var enemies = document.getElementsByClassName("uEnemy");
-        for (let i = 0; i < enemies.length; i++) {
-            let enemyStartPosition = enemies[i].id;
-            let enemyStartElement = enemies[i];
+        let uEnemies = document.querySelectorAll(".uEnemy");
+        uEnemies.forEach(function(enemySqr) {
+            enemySqr.offsetHeight;
+            let enemyStartPosition = enemySqr.id;
+            let enemyStartElement = enemySqr;
             let parts = enemyStartPosition.split('-');
             let startX = parseInt(parts[1]);
             let startY = parseInt(parts[2]);
 
-            if (enemies[i].className === "square uEnemy U") {
+            if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("U")) {
+                console.log("found U element!");
                 if (playerX === startX && playerY === startY - 1) {
                     killPlayer("red");
                     clearInterval(timerId);
                     clearInterval(secondId);
-                    console.log("player died")
+                    console.log("player died"); 
                 }
                 let enemyEndPosition = `square-${startX}-${startY - 1}`;
                 let endPosition = document.getElementById(enemyEndPosition);
 
                 endPosition.style.backgroundColor = "red";
-                endPosition.classList.add("uEnemy");
-                
-                console.log("End = ", endPosition);
-                console.log("End Class", endPosition.className);
 
                 enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.className = "square";
-                console.log("Start = ", enemies[i]);
+                enemyStartElement.classList.remove("uEnemy");
+                enemyStartElement.classList.remove("U");
                 endPosition.className = "square uEnemy D";
-            } else if (enemies[i].className === "square uEnemy D") {
+                endPosition.offsetHeight;
+            } else if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("D")) {
+                console.log("found D element!");
                 if (playerX === startX && playerY === startY + 1) {
                     killPlayer("red");
                     clearInterval(timerId);
@@ -364,18 +449,63 @@ function gameClock(t) {
                 let endPosition = document.getElementById(enemyEndPosition);
 
                 endPosition.style.backgroundColor = "red";
-                endPosition.classList.add("uEnemy");
-                
-                console.log("End = ", endPosition);
-                console.log("End Class", endPosition.className);
 
                 enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.className = "square";
-                console.log("Start = ", enemies[i]);
+                enemyStartElement.classList.remove("uEnemy");
+                enemyStartElement.classList.remove("D");
                 endPosition.className = "square uEnemy U";
+                endPosition.offsetHeight;
+            }
+        });
+
+        let rEnemies = document.querySelectorAll(".rEnemy");
+        rEnemies.forEach(function(enemySqr) {
+            enemySqr.offsetHeight;
+            let enemyStartPosition = enemySqr.id;
+            let enemyStartElement = enemySqr;
+            let parts = enemyStartPosition.split('-');
+            let startX = parseInt(parts[1]);
+            let startY = parseInt(parts[2]);
+
+            if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("R")) {
+                console.log("found U element!");
+                if (playerX === startX + 1 && playerY === startY) {
+                    killPlayer("red");
+                    clearInterval(timerId);
+                    clearInterval(secondId);
+                    console.log("player died"); 
+                }
+                let enemyEndPosition = `square-${startX + 1}-${startY}`;
+                let endPosition = document.getElementById(enemyEndPosition);
+
+                endPosition.style.backgroundColor = "red";
+
+                enemyStartElement.style.backgroundColor = "white";
+                enemyStartElement.classList.remove("rEnemy");
+                enemyStartElement.classList.remove("R");
+                endPosition.className = "square rEnemy L";
+                endPosition.offsetHeight;
+            } else if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("L")) {
+                console.log("found D element!");
+                if (playerX === startX - 1 && playerY === startY) {
+                    killPlayer("red");
+                    clearInterval(timerId);
+                    clearInterval(secondId);
+                    console.log("player died")
+                }
+                let enemyEndPosition = `square-${startX - 1}-${startY}`;
+                let endPosition = document.getElementById(enemyEndPosition);
+
+                endPosition.style.backgroundColor = "red";
+
+                enemyStartElement.style.backgroundColor = "white";
+                enemyStartElement.classList.remove("rEnemy");
+                enemyStartElement.classList.remove("L");
+                endPosition.className = "square rEnemy R";
+                endPosition.offsetHeight;
             }
         
-        }
+        });
     }
 
     timerId = setInterval(function() {
@@ -567,7 +697,7 @@ function checkCollision() {
         clearInterval(secondId);
         killPlayer("red");
     }
-    if (playerSqr.className === "square uEnemy") {
+    if (playerSqr.classList.contains("uEnemy")) {
         clearInterval(timerId);
         clearInterval(secondId);
         killPlayer("red");
