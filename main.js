@@ -4,6 +4,7 @@ const timerElement = document.getElementById("timer");
 
 const levelsBtn = document.getElementById("menu-btn-levels");
 const tutorialBtn = document.getElementById("menu-btn-tutorial");
+const settingsBtn = document.getElementById("menu-btn-settings");
 
 const menuBtns = document.querySelectorAll(".menu-btn");
 
@@ -11,6 +12,7 @@ const gamePage = document.getElementById("game");
 const menuPage = document.getElementById("menu");
 const levelsPage = document.getElementById("levels");
 const tutorialPage = document.getElementById("tutorial");
+const settingsPage = document.getElementById("settings");
 const gameAniPage = document.getElementById("gameAnimation");
 
 var playerX = null;
@@ -32,79 +34,70 @@ let keyApickedUp = false;
 let keyBpickedUp = false;
 
 var levelCompleted = 1;
+let gameDifficulty = 0.75;
+let timerOpacity = 30;
+let currentLevel = null;
 
 levels = [
     {
         levelNum: 1,
-        timeLimit: 60,
+        timeLimit: 30,
         cords: [
-            "....x...",
-            "....x.w.",
-            ".p..x...",
-            "........",
-            "....x..."
+            "....x..",
+            "....x.w",
+            ".p..x..",
+            "......."
         ]
     },
     {
         levelNum: 2,
-        timeLimit: 20,
+        timeLimit: 8,
         cords: [
-            ".......x.w.",
-            "...x.......",
-            "...x.......",
-            ".p.x...r...",
-            "...x.......",
-            "...x.......",
+            "......x..",
+            "...x..x..",
+            "...x..x.w",
+            ".p.x..x..",
+            "...x.....",
         ]
     },
     {
         levelNum: 3,
         timeLimit: 10,
         cords: [
-            "......xxxx...xxxx",
-            ".....x....x.x...w",
-            ".p...x....x.x....",
-            "..........x......",
-            "......xxxx...xxxx",
-            "..........x......",
-            ".....x....x.x....",
-            ".....x....x.x....",
-            "......xxx....xxxx",
-            
+            "...x...xx...x",
+            "...x.x....x..",
+            "...x..x..xxx.",
+            "...xx.x......",
+            ".p.x..x..xxx.",
+            ".....x..x....",
+            "...xx..x..w..",
         ]
     },
     {
         levelNum: 4,
-        timeLimit: 25,
+        timeLimit: 9,
         cords: [
-            "......x..x..x.x...w",
-            ".....xa.x..x......x",
-            ".p..x..x....xbxx...",
-            "......x..xdx....x..",
-            ".....x..x..x..x.x..",
-            "....x..x...x..x.x..",
-            "......x....x..x.x..",
-            ".....x....x...x..x.",
-            "......x..x....x..x.",
-            "...c.x..x..xxx..xx.",
-            "......x.......x....",
+            "...ax...x..w",
+            "....x.x.x.x.",
+            ".p..x.x.x.x.",
+            "....x.x...x.",
+            "....x.xxxxx.",
+            "......b.....",
         ]
     },
     {
         levelNum: 5,
-        timeLimit: 25,
+        timeLimit: 18,
         cords: [
-            "......x..x..x.x...w",
-            ".....xa.x..x......x",
-            ".p..x..x....xbxx...",
-            "......x..x.x....x..",
-            ".....x..x..x..x.x..",
-            "....x..x...x..x.x..",
-            "......x....x..x.x..",
-            ".....x....x...x..x.",
-            "......x..x....x..x.",
-            ".....x..x..xxx..xx.",
-            "......x.......x....",
+            "......axw",
+            "...xxxxx.",
+            "...x...x.",
+            ".p.x.x.x.",
+            "...xcx.x.",
+            "...xxx.d.",
+            "...b...x.",
+            "...xxxxxx",
+            ".........",
         ]
     },
 ];
@@ -113,7 +106,7 @@ levels = [
 // ui functions:
 
 function hideButtons() {
-    for (var i = levelCompleted + 4; i <= 10; i++) {
+    for (var i = levelCompleted + 1; i <= 10; i++) {
         var btn = document.getElementById(`levelbtn-${i}`);
         if (btn) {
             btn.className = "hidden";
@@ -136,6 +129,8 @@ startLvlBtns.forEach(function(lvlBtn) {
         var levelNum = parseInt(lvlBtn.id.slice("levelBtn-".length));
         console.log(levelNum)
         drawLevel(levels[levelNum - 1]);
+        currentLevel = levelNum;
+        console.log("cur" + currentLevel)
         levelsPage.style.display = "none";
         gamePage.style.display = "block";
     });
@@ -151,6 +146,7 @@ menuBtns.forEach(function(menuBtn) {
         menuPage.style.display = "flex";
         levelsPage.style.display = "none";
         tutorialPage.style.display = "none";
+        settingsPage.style.display = "none";
     });
 });
 
@@ -158,6 +154,44 @@ tutorialBtn.addEventListener('click', function() {
     menuPage.style.display = "none";
     tutorialPage.style.display = "flex";
 })
+
+settingsBtn.addEventListener('click', function() {
+    menuPage.style.display = "none";
+    settingsPage.style.display = "flex";
+})
+
+// settings functions 
+
+const difSlider = document.getElementById('difficulty-slider');
+const difText = document.getElementById('difficulty-text');
+
+function updateDifficulty() {
+    const value = difSlider.value;
+
+    if (value == 1) {
+        difText.textContent = 'Difficulty: Easy';
+        gameDifficulty = 1;
+    } else if (value == 2) {
+        difText.textContent = 'Difficulty: Medium';
+        gameDifficulty = 0.75;
+    } else if (value == 3) {
+        difText.textContent = 'Difficulty: Hard';
+        gameDifficulty = 0.5;
+    }
+}
+
+difSlider.addEventListener('input', updateDifficulty);
+
+const opaSlider = document.getElementById('opacity-slider');
+const opaText = document.getElementById('opacity-text');
+
+function updateDifficulty() {
+    const value = opaSlider.value;
+    opaText.textContent = 'Timer opacity: ' + value + "%";
+    timerOpacity = value;
+}
+
+opaSlider.addEventListener('input', updateDifficulty);
 
 // game functions
 
@@ -235,8 +269,8 @@ function drawLevel(level) {
                 gateB.src = "cross.png"
                 square.appendChild(gateB);
             }
-            if (symbol === "r") {
-                square.className = "square rEnemy";
+            if (symbol === "u") {
+                square.className = "square uEnemy U";
                 square.style.backgroundColor = "red"
             }
 
@@ -261,17 +295,16 @@ function drawLevel(level) {
 
 
     levelRunning = true;
-    gameClock(level.timeLimit);
+    gameClock(level.timeLimit * gameDifficulty);
     //drawPlayer();
     //drawEnd();
 }
 
-let intervalId;
+let timerId, secondId;
 
 function gameClock(t) {
     console.log(t);
     let remainingTime = t * 100;
-    let timerId, secondId;
 
     function updateTimer() {
         let seconds = Math.floor(remainingTime / 100);
@@ -292,26 +325,56 @@ function gameClock(t) {
 
     function runEverySecond() {
         console.log("running every second!")
-        var rEnemies = document.getElementsByClassName("rEnemy");
-        for (let i = 0; i < rEnemies.length; i++) {
-            let enemyStartPosition = rEnemies[i].id;
-            let enemyStartElement = rEnemies[i];
+        var enemies = document.getElementsByClassName("uEnemy");
+        for (let i = 0; i < enemies.length; i++) {
+            let enemyStartPosition = enemies[i].id;
+            let enemyStartElement = enemies[i];
             let parts = enemyStartPosition.split('-');
             let startX = parseInt(parts[1]);
             let startY = parseInt(parts[2]);
 
-            let enemyEndPosition = `square-${startX}-${startY - 1}`;
-            let endPosition = document.getElementById(enemyEndPosition);
+            if (enemies[i].className === "square uEnemy U") {
+                if (playerX === startX && playerY === startY - 1) {
+                    killPlayer("red");
+                    clearInterval(timerId);
+                    clearInterval(secondId);
+                    console.log("player died")
+                }
+                let enemyEndPosition = `square-${startX}-${startY - 1}`;
+                let endPosition = document.getElementById(enemyEndPosition);
 
-            endPosition.style.backgroundColor = "red";
-            endPosition.classList.add("rEnemy");
-            
-            console.log("End = ", endPosition);
-            console.log("End Class", endPosition.className);
+                endPosition.style.backgroundColor = "red";
+                endPosition.classList.add("uEnemy");
+                
+                console.log("End = ", endPosition);
+                console.log("End Class", endPosition.className);
 
-            rEnemies[i].style.backgroundColor = "purple";
-            rEnemies[i].className = "square";
-            console.log("Start = ", rEnemies[i]);
+                enemyStartElement.style.backgroundColor = "white";
+                enemyStartElement.className = "square";
+                console.log("Start = ", enemies[i]);
+                endPosition.className = "square uEnemy D";
+            } else if (enemies[i].className === "square uEnemy D") {
+                if (playerX === startX && playerY === startY + 1) {
+                    killPlayer("red");
+                    clearInterval(timerId);
+                    clearInterval(secondId);
+                    console.log("player died")
+                }
+                let enemyEndPosition = `square-${startX}-${startY + 1}`;
+                let endPosition = document.getElementById(enemyEndPosition);
+
+                endPosition.style.backgroundColor = "red";
+                endPosition.classList.add("uEnemy");
+                
+                console.log("End = ", endPosition);
+                console.log("End Class", endPosition.className);
+
+                enemyStartElement.style.backgroundColor = "white";
+                enemyStartElement.className = "square";
+                console.log("Start = ", enemies[i]);
+                endPosition.className = "square uEnemy U";
+            }
+        
         }
     }
 
@@ -350,7 +413,7 @@ function movePlayer() {
         console.log("levelSize = " + levelSizeX + ": " + levelSizeY);
         if (playerX < 3 && playerY < 2) {
             console.log("hide")
-            document.getElementById("timer").style.opacity = "0.3";
+            document.getElementById("timer").style.opacity = timerOpacity * 0.01;
         } else {
             document.getElementById("timer").style.opacity = "1";
         }
@@ -457,18 +520,23 @@ document.addEventListener("keydown", function(event) {
 
 function checkCollision() {
     if (playerX === winSqrX && playerY === winSqrY) {
-        clearInterval(intervalId);
+        clearInterval(timerId);
+        clearInterval(secondId);
         console.log("You completed the game!");
         keyApickedUp = false;
         keyBpickedUp = false;
         timerText.style.color = "black";
         killPlayer("green");
-        levelCompleted = levelCompleted + 1;
-        hideButtons();
+        if (currentLevel === levelCompleted) {
+            levelCompleted = levelCompleted + 1;
+            document.getElementById("menu-difficulty").src = "stars/level" + (levelCompleted - 1) + ".png";
+            hideButtons();
+        }
     }
     var playerSqr = document.getElementById(`square-${playerX}-${playerY}`)
     if (playerSqr.className === "square obstacle") {
-        clearInterval(intervalId);
+        clearInterval(timerId);
+        clearInterval(secondId);
         killPlayer("red");
     }
     if (playerSqr.className === "square keyA") {
@@ -481,7 +549,8 @@ function checkCollision() {
         //}
     }
     if (playerSqr.className === "square keyAgate" && keyApickedUp === false) {
-        clearInterval(intervalId);
+        clearInterval(timerId);
+        clearInterval(secondId);
         killPlayer("red");
     }
     if (playerSqr.className === "square keyB") {
@@ -494,11 +563,13 @@ function checkCollision() {
         //}
     }
     if (playerSqr.className === "square keyBgate" && keyBpickedUp === false) {
-        clearInterval(intervalId);
+        clearInterval(timerId);
+        clearInterval(secondId);
         killPlayer("red");
     }
-    if (playerSqr.className === "square rEnemy") {
-        clearInterval(intervalId);
+    if (playerSqr.className === "square uEnemy") {
+        clearInterval(timerId);
+        clearInterval(secondId);
         killPlayer("red");
     }
 }

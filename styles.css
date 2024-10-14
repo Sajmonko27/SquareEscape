@@ -39,6 +39,9 @@
     width: 100%;
     height: 28px;
 }
+#menu-difficulty {
+    padding-bottom: 4px;
+}
 
 /* game */
 
@@ -146,4 +149,32 @@
 #levels-buttons button {
     width: 167px;
     height: 85px;
+}
+
+/* settings */
+
+#settings {
+    width: 100%;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+}
+#settings-column {
+    width: 512px;
+}
+#settings-list {
+    padding-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+#settings-subsettings {
+    width: 360px;
+}
+.settings-element {
+    padding-top: 8px;
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
 }
