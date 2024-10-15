@@ -133,41 +133,71 @@ levels = [
     },
     {
         levelNum: 8,
-        timeLimit: 18,
+        timeLimit: 20,
         cords: [
-            "................................",
-            "................................",
-            "................b...............",
-            ".p..............................",
-            "................................",
-            "..xxxxxxx......................",
-            "x.......xx.....................",
-            "x.uuuuuuax......................",
-            ".xxxxxxxx.......................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            "................................",
-            
+            "...x...r.x....bw",
+            "...x..x..xvv..x.",
+            ".....x.r.x....x.",
+            ".p..x...xr..l.x.",
+            "...x...x....x.x.",
+            "..x...x.x.uux.x.",
+            ".x.r...x....x.x.",
+            "xauv..x.x...x.x.",
+            ".r..........x.r.",
         ]
     },
     {
         levelNum: 9,
-        timeLimit: 18,
+        timeLimit: 35,
         cords: [
-            "......axw",
-            "...xxxxx.",
-            "...x...x.",
-            ".p.x.x.x.",
-            "...xcx.x.",
-            "...xxx.d.",
-            "...b...x.",
-            "...xxxxxx",
-            ".........",
+            "a.........x...x.....xx..x.d...w.",
+            "....x.x.x...x.xr.x.lx.x.x.xxxxx.",
+            "xxxxxxx.x.xx..xr.x.lx.....x.....",
+            ".......x.x...x.r.x.lx.xx..x.xxxx",
+            ".p......x..xx..r.x.lx.....x.....",
+            "x............x.r.x.lx..xx.xxxxx.",
+            ".x.xxxxx.xxx..xr.x.lx.....x.....",
+            "..x....xx...x.xr.x.lx...x.x...xx",
+            "..cxxx.x..x...xr.x.lx.xx....x...",
+            "..x..x...x.x.x.r.x.lxx...x.x.x..",
+            "x.....bx.x.x..xr.x.lx..x..x...x.",
+            "...x....x.x.x....x....x.x...x...",
+            
+        ]
+    },
+    {
+        levelNum: 10,
+        timeLimit: 60,
+        cords: [
+            "...xxxxx.x.x.x.x.x.....x...xv.v.....v.vxxxxx............",
+            "...x...x..x.x..x.x.....v...x...........xxxxxx..xxxxxxx..",
+            "...x...x.x.x.x.x.x......r..xv.v.....vvv.pxxxxx..xxxxx..x",
+            ".x.x...x..x.x..x.x......r..x...........x.xxxxxx..xxx..xx",
+            "...xxxxx.x.x.x.x.x.....u...x.u..xxx....x.lxxxxxx..xxx..x",
+            "...............x.xr..lx....x...x.l.xu.ux.lxxxxxxx..xxx..",
+            "...xxxxx...x...x.xr..lxr.r.x..x...l.x..x.lxxxxxxxx..xxx.",
+            "...xx.xx..x.x..x.xr..lx.l..x.xvvvx.l.x.x.lxxxxxxxxx.xxx.",
+            "...x.x.x.x.x.x.x.xr..lx.l..x.....b.r.xxx.lxxxxxxxx..xxx.",
+            "...xx.xx..x.x..x.xr..lx.luuxxx...xr..x.x.lxxxxxxx..xxx..",
+            "...xxxxx...x...x.xr..lx....x..xuur..x..x.lxxxxxx..xxx..x",
+            "xxxxx..........x.xr..lx.lr.x...xr..x...x.lxxxxx..xxx..xx",
+            "x.x.x.xxxxxxxxxx.xr..lxr.r.x....x.x....x.lxxxx..xxx..xxx",
+            "xx.xx?x..........xr..lx.lr.x...........x.lxxx..xxx..xxxx",
+            "x.x.x.xxxxxxxxxxxxr..lxr.r.xxxxxxxxxxx.x.lxx..xxx..xxxxx",
+            "xxxxx..xx.....xxxxr..lxr.r..r..l.......x.lxx.xxx..xxxxxx",
+            "........xxcxx...xxxx..xxxxxr..l.vvvxuuux.xxx..xxx..xxxxx",
+            "x.......xxxxxxx..xxxx..xxxxr..l.....l..x.xxxx..xxx..xxxx",
+            "xx......xxxxxxxx..xxxx.xxxxr..v.v.v..uux.xxxxx..xxx..xxx",
+            "xxx......xxxxxxxx......xxxxr.u.u.u.uxx.x.xxxxxx..xxx..xx",
+            "xxxx...x.xxxxxxxxx..xxxxxxxr..v.v.v..d.x.xxxxxxx.xxxx..x",
+            "xxxx..xx..xxxxxx.....xxxxxxr.x.v.v.v.x.x.xxxxxx..xxxxx..",
+            "xxx..xxxx..xxxx..xxx.xxxxxxr..l.xr...x.x.xxxxx..xxxxxxx.",
+            "xx..xxxxxx.xxxxxxxxx.xxxxxxr..lxxr..ux.x.xxxx..xxxxxxx..",
+            "x..xxxxxxx...xxxxxxx#xxxxxx..lxxxr.xxx.x.xxx..xxxxxxx..x",
+            "..##########...xxxxx.xxxxxx.lxxxxx.....x.xx..xxxxxxx..xx",
+            "axxxxxxxxxxxxx..x....xxx..xxxxxxxxuuuu.x.x..xxxxxxx..xxx",
+            "xxxxxxxxxxxxxxx...xx.....xxxxxxxxxxxxxxx...xxxxxxx.....w",
+            
         ]
     },
 ];
@@ -176,7 +206,7 @@ levels = [
 // ui functions:
 
 function hideButtons() {
-    for (var i = levelCompleted + 8; i <= 10; i++) {
+    for (var i = levelCompleted + 10; i <= 10; i++) {
         var btn = document.getElementById(`levelbtn-${i}`);
         if (btn) {
             btn.className = "hidden";
@@ -295,6 +325,10 @@ function drawLevel(level) {
                 square.className = "square obstacle";
                 square.style.backgroundColor = "black"
             }
+            if (symbol === "#") {
+                square.className = "square fakeObstacle";
+                square.style.backgroundColor = "black"
+            }
             if (symbol === "p") {
                 square.style.backgroundColor = "green";
                 playerX = x;
@@ -346,8 +380,21 @@ function drawLevel(level) {
                 gateB.src = "cross.png"
                 square.appendChild(gateB);
             }
+            if (symbol === "?") {
+                square.style.backgroundColor = "gray";
+                square.className = "square hint1";
+                const hintQuestionMark = document.createElement('img');
+                hintQuestionMark.style.width = "30px";
+                hintQuestionMark.id = `questionMark`;
+                hintQuestionMark.src = "questionMark.png"
+                square.appendChild(hintQuestionMark);
+            }
             if (symbol === "u") {
                 square.className = "square uEnemy U";
+                square.style.backgroundColor = "red"
+            }
+            if (symbol === "v") {
+                square.className = "square uEnemy D";
                 square.style.backgroundColor = "red"
             }
             if (symbol === "r") {
@@ -698,6 +745,11 @@ function checkCollision() {
         killPlayer("red");
     }
     if (playerSqr.classList.contains("uEnemy")) {
+        clearInterval(timerId);
+        clearInterval(secondId);
+        killPlayer("red");
+    }
+    if (playerSqr.classList.contains("rEnemy")) {
         clearInterval(timerId);
         clearInterval(secondId);
         killPlayer("red");
