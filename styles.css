@@ -44,6 +44,9 @@
     width: 100%;
     height: 28px;
 }
+#menu-buttons button:hover {
+    cursor:pointer;
+}
 #menu-difficulty {
     padding-bottom: 4px;
 }
@@ -87,6 +90,31 @@
     opacity: 1;
 }
 
+/* game messages */
+
+#hintPage {
+    width: 100%;
+    height: 100vh; 
+    display: none;
+    background-color: transparent;
+    justify-content: center;
+    pointer-events: none;
+    position: absolute;
+    opacity: 3;
+}
+
+#hintPage-message {
+    margin-top: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    height: 3rem;
+    width: 512px;
+    background-color: #ddd;
+    filter: drop-shadow(0px 0px 10px #000000);
+    border-radius: 4px;
+}
+
 /* levels */
 
 #levels {
@@ -118,6 +146,11 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    border-radius: 2px;
+    border: black 1px solid;
+}
+#levels-buttons button:hover {
+    cursor:pointer;
 }
 .menu-btn {
     width: 200px;
@@ -208,4 +241,7 @@
     align-items: center;
     display: flex;
     flex-direction: column;
+}
+#credits-list h3 {
+    text-align: center;
 }

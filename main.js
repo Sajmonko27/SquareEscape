@@ -6,6 +6,7 @@ const levelsBtn = document.getElementById("menu-btn-levels");
 const tutorialBtn = document.getElementById("menu-btn-tutorial");
 const settingsBtn = document.getElementById("menu-btn-settings");
 const creditsBtn = document.getElementById("menu-btn-credits");
+const randomLevelBtn = document.getElementById("menu-btn-random");
 
 const menuBtns = document.querySelectorAll(".menu-btn");
 
@@ -16,6 +17,7 @@ const tutorialPage = document.getElementById("tutorial");
 const settingsPage = document.getElementById("settings");
 const creditsPage = document.getElementById("credits");
 const gameAniPage = document.getElementById("gameAnimation");
+const gameHintPage = document.getElementById("hintPage");
 
 var playerX = null;
 var playerY = null;
@@ -39,6 +41,8 @@ var levelCompleted = 1;
 let gameDifficulty = 0.75;
 let timerOpacity = 30;
 let currentLevel = null;
+
+let arrowControls = 0;
 
 levels = [
     {
@@ -167,12 +171,12 @@ levels = [
     },
     {
         levelNum: 10,
-        timeLimit: 60,
+        timeLimit: 120,
         cords: [
             "...xxxxx.x.x.x.x.x.....x...xv.v.....v.vxxxxx............",
             "...x...x..x.x..x.x.....v...x...........xxxxxx..xxxxxxx..",
-            "...x...x.x.x.x.x.x......r..xv.v.....vvv.pxxxxx..xxxxx..x",
-            ".x.x...x..x.x..x.x......r..x...........x.xxxxxx..xxx..xx",
+            "...x...x.x.x.x.x.x......r..xv.v.....vvv..xxxxx..xxxxx..x",
+            ".p.x...x..x.x..x.x......r..x...........x.xxxxxx..xxx..xx",
             "...xxxxx.x.x.x.x.x.....u...x.u..xxx....x.lxxxxxx..xxx..x",
             "...............x.xr..lx....x...x.l.xu.ux.lxxxxxxx..xxx..",
             "...xxxxx...x...x.xr..lxr.r.x..x...l.x..x.lxxxxxxxx..xxx.",
@@ -194,9 +198,9 @@ levels = [
             "xxx..xxxx..xxxx..xxx.xxxxxxr..l.xr...x.x.xxxxx..xxxxxxx.",
             "xx..xxxxxx.xxxxxxxxx.xxxxxxr..lxxr..ux.x.xxxx..xxxxxxx..",
             "x..xxxxxxx...xxxxxxx#xxxxxx..lxxxr.xxx.x.xxx..xxxxxxx..x",
-            "..##########...xxxxx.xxxxxx.lxxxxx.....x.xx..xxxxxxx..xx",
-            "axxxxxxxxxxxxx..x....xxx..xxxxxxxxuuuu.x.x..xxxxxxx..xxx",
-            "xxxxxxxxxxxxxxx...xx.....xxxxxxxxxxxxxxx...xxxxxxx.....w",
+            "..##########...xxxxx.xxxxxx.xxxxxx.....x.xx..xxxxxxx..xx",
+            "axxxxxxxxxxxxx..x....xxx..x.xxxxxxuuuu.x.x..xxxxxxx..xxx",
+            "xxxxxxxxxxxxxxx...xx.....xx.xxxxxxxxxxxx...xxxxxxx.....w",
             
         ]
     },
@@ -206,10 +210,17 @@ levels = [
 // ui functions:
 
 function hideButtons() {
-    for (var i = levelCompleted + 10; i <= 10; i++) {
+    for (var i = levelCompleted + 1; i <= 10; i++) {
         var btn = document.getElementById(`levelbtn-${i}`);
         if (btn) {
             btn.className = "hidden";
+        }
+    }
+    for (var i = levelCompleted - 1; i >= 1; i--) {
+        var btn = document.getElementById(`levelbtn-${i}`);
+        if (btn) {
+            btn.className = "start-completedLevel";
+            btn.style.backgroundColor = "rgb(215 255 95)";    
         }
     }
     if (levelCompleted > 1) {
@@ -300,6 +311,23 @@ function updateOpacity() {
 
 opaSlider.addEventListener('input', updateOpacity);
 
+const controlsBtn = document.getElementById('controls-button');
+const controlsText = document.getElementById('controls-text');
+
+function updateControls() {
+    if (arrowControls === 0) {
+        arrowControls = 1;
+        controlsText.textContent = 'Arrow key controls: Enabled';
+        console.log("Arrow key controls enabled", arrowControls)
+    } else if (arrowControls === 1) {
+        arrowControls = 0;
+        controlsText.textContent = 'Arrow key controls: Disabled';
+        console.log("Arrow key controls disabled", arrowControls)
+    }
+}
+
+controlsBtn.addEventListener('click', updateControls);
+
 // game functions
 
 function drawLevel(level) {
@@ -381,7 +409,7 @@ function drawLevel(level) {
                 square.appendChild(gateB);
             }
             if (symbol === "?") {
-                square.style.backgroundColor = "gray";
+                square.style.backgroundColor = "#dddddd";
                 square.className = "square hint1";
                 const hintQuestionMark = document.createElement('img');
                 hintQuestionMark.style.width = "30px";
@@ -432,6 +460,82 @@ function drawLevel(level) {
     //drawEnd();
 }
 
+function randomLevelGenerator() {
+    levelsPage.style.display = "none";
+    gamePage.style.display = "block";
+    xLimit = Math.floor(Math.random() * (32 - 10 + 1)) + 10;
+    yLimit = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+    for (y = 0; y < yLimit;y++) {
+        const rowElement = document.createElement('div');
+        rowElement.className = "row";
+        rowElement.id = `row-${y}`;
+        gamePage.appendChild(rowElement);
+        levelSizeY = y + 1;
+        for (x = 0; x < xLimit; x++) {
+            const square = document.createElement('div');
+            square.className = "square";
+            square.id = `square-${x}-${y}`;
+            rowElement.appendChild(square);
+            levelSizeX = x + 1;
+        }
+    }
+
+    obstacles = Math.floor(Math.random() * (100 - 10 + 1)) + 10;
+
+    winGenerated = false;
+
+    for (z = 0; z < obstacles;z++) {
+        const randomX = Math.floor(Math.random() * xLimit);
+        const randomY = Math.floor(Math.random() * yLimit); 
+        const randomNum = Math.floor(Math.random() * 3) + 1; 
+    
+        const randomSquare = document.getElementById(`square-${randomX}-${randomY}`);
+        if (z + 1 === obstacles) {
+            randomSquare.style.backgroundColor = "yellow";
+            randomSquare.classList.add("winSquare");
+            winSqrX = randomX;
+            winSqrY = randomY;
+        } else if (randomSquare && randomNum === 1) {
+            randomSquare.style.backgroundColor = "red";
+            randomSquare.classList.add("uEnemy");
+            randomSquare.classList.add("U");
+        } else if (randomSquare && randomNum === 2) {
+            randomSquare.style.backgroundColor = "black";
+            randomSquare.classList.add("obstacle");
+        } else if (randomSquare && randomNum === 3) {
+            randomSquare.style.backgroundColor = "red";
+            randomSquare.classList.add("rEnemy");
+            randomSquare.classList.add("R");
+        } 
+    }
+
+
+    document.getElementById("square-1-3").style.backgroundColor = "green";
+    playerX = 1;
+    playerY = 3;
+    levelRunning = true;
+
+    var timerText = document.getElementById("timerText");
+    if (!timerText) {
+        var timerText = document.createElement("h2");
+        timerText.id = "timerText";
+        timerText.style.fontSize = "32px";
+        timerText.innerHTML = "30.00s";
+        timerElement.style.display = "flex";
+        timerElement.style.alignItems = "center";
+        timerElement.style.justifyContent = "center";
+        timerElement.appendChild(timerText);
+    }
+
+    gameClock(10 * 1);
+}
+
+randomLevelBtn.addEventListener('click', function() {
+    menuPage.style.display = "none";
+    gamePage.style.display = "flex";
+    randomLevelGenerator()
+})
+
 let timerId, secondId;
 
 function gameClock(t) {
@@ -469,7 +573,7 @@ function gameClock(t) {
             if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("U")) {
                 console.log("found U element!");
                 if (playerX === startX && playerY === startY - 1) {
-                    killPlayer("red");
+                    killPlayer("red",2000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died"); 
@@ -477,17 +581,20 @@ function gameClock(t) {
                 let enemyEndPosition = `square-${startX}-${startY - 1}`;
                 let endPosition = document.getElementById(enemyEndPosition);
 
-                endPosition.style.backgroundColor = "red";
+                if (endPosition) {
+                    endPosition.style.backgroundColor = "red";
+    
+                    enemyStartElement.style.backgroundColor = "white";
+                    enemyStartElement.classList.remove("uEnemy");
+                    enemyStartElement.classList.remove("U");
+                    endPosition.className = "square uEnemy D";
+                    endPosition.offsetHeight;
+                }
 
-                enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.classList.remove("uEnemy");
-                enemyStartElement.classList.remove("U");
-                endPosition.className = "square uEnemy D";
-                endPosition.offsetHeight;
             } else if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("D")) {
                 console.log("found D element!");
                 if (playerX === startX && playerY === startY + 1) {
-                    killPlayer("red");
+                    killPlayer("red",2000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died")
@@ -495,13 +602,15 @@ function gameClock(t) {
                 let enemyEndPosition = `square-${startX}-${startY + 1}`;
                 let endPosition = document.getElementById(enemyEndPosition);
 
-                endPosition.style.backgroundColor = "red";
+                if (endPosition) {
+                    endPosition.style.backgroundColor = "red";
 
-                enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.classList.remove("uEnemy");
-                enemyStartElement.classList.remove("D");
-                endPosition.className = "square uEnemy U";
-                endPosition.offsetHeight;
+                    enemyStartElement.style.backgroundColor = "white";
+                    enemyStartElement.classList.remove("uEnemy");
+                    enemyStartElement.classList.remove("D");
+                    endPosition.className = "square uEnemy U";
+                    endPosition.offsetHeight;
+                }
             }
         });
 
@@ -517,7 +626,7 @@ function gameClock(t) {
             if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("R")) {
                 console.log("found U element!");
                 if (playerX === startX + 1 && playerY === startY) {
-                    killPlayer("red");
+                    killPlayer("red",2000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died"); 
@@ -525,17 +634,19 @@ function gameClock(t) {
                 let enemyEndPosition = `square-${startX + 1}-${startY}`;
                 let endPosition = document.getElementById(enemyEndPosition);
 
-                endPosition.style.backgroundColor = "red";
+                if (endPosition) {
+                    endPosition.style.backgroundColor = "red";
 
-                enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.classList.remove("rEnemy");
-                enemyStartElement.classList.remove("R");
-                endPosition.className = "square rEnemy L";
-                endPosition.offsetHeight;
+                    enemyStartElement.style.backgroundColor = "white";
+                    enemyStartElement.classList.remove("rEnemy");
+                    enemyStartElement.classList.remove("R");
+                    endPosition.className = "square rEnemy L";
+                    endPosition.offsetHeight;
+                }
             } else if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("L")) {
                 console.log("found D element!");
                 if (playerX === startX - 1 && playerY === startY) {
-                    killPlayer("red");
+                    killPlayer("red",2000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died")
@@ -543,13 +654,15 @@ function gameClock(t) {
                 let enemyEndPosition = `square-${startX - 1}-${startY}`;
                 let endPosition = document.getElementById(enemyEndPosition);
 
-                endPosition.style.backgroundColor = "red";
+                if (endPosition) {
+                    endPosition.style.backgroundColor = "red";
 
-                enemyStartElement.style.backgroundColor = "white";
-                enemyStartElement.classList.remove("rEnemy");
-                enemyStartElement.classList.remove("L");
-                endPosition.className = "square rEnemy R";
-                endPosition.offsetHeight;
+                    enemyStartElement.style.backgroundColor = "white";
+                    enemyStartElement.classList.remove("rEnemy");
+                    enemyStartElement.classList.remove("L");
+                    endPosition.className = "square rEnemy R";
+                    endPosition.offsetHeight;
+                }
             }
         
         });
@@ -560,7 +673,7 @@ function gameClock(t) {
         remainingTime--;
 
         if (remainingTime < 0) {
-            killPlayer("red");
+            killPlayer("red",2000);;
             clearInterval(timerId);
             clearInterval(secondId);
             var timerText = document.getElementById("timerText");
@@ -598,11 +711,15 @@ function movePlayer() {
 
 }
 
-function killPlayer (color) {
+function killPlayer (color,aniLenght) {
+    timerText = document.getElementById("timerText")
+    timerText.style.color = "black";
     if (color === "red") {
         backColor = "rgb(255 50 50)";
     } else if (color === "green") {
         backColor = "rgb(50 255 50)";
+    } else if (color === "yellow") {
+        backColor = "yellow";
     }
     levelRunning = false;
     console.log(levelRunning);
@@ -617,12 +734,12 @@ function killPlayer (color) {
     gameAniPage.style.backgroundColor = backColor;
 
     const steps = 50; 
-    const interval = 1000 / steps;
+    const interval = aniLenght / steps;
 
     for (let x = 0; x <= steps; x++) {
         setTimeout(() => {
-            gameAniPage.style.backdropFilter = "blur(" + x / steps * 100 + "px)"; 
-            gameAniPage.style.opacity = x / steps / 2;
+            gameAniPage.style.backdropFilter = "blur(" + x / steps * 10 + "px)"; 
+            gameAniPage.style.opacity = x / steps;
         }, x*interval);
     }
 
@@ -633,56 +750,123 @@ function killPlayer (color) {
                 gamePage.removeChild(child);
             }
         }
-        gamePage.style.display = "none";
-        menuPage.style.display = "flex";
-        gameAniPage.style.display = "none";
-        gameAniPage.style.pointerEvents = "none";
-        timerElement.style.backgroundColor = "white";
-    }, 1000);
+
+        if(aniLenght !== 5000) {
+            gamePage.style.display = "none";
+            menuPage.style.display = "flex";
+            gameAniPage.style.display = "none";
+            gameAniPage.style.pointerEvents = "none";
+            timerElement.style.backgroundColor = "white";
+        } else {
+            hintPage.style.display = "flex";
+            hintText = document.getElementById("hintPage-text");
+            hintMessageRect = document.getElementById("hintPage-message");
+            hintMessageRect.style.filter = "none";
+            hintMessageRect.style.backgroundColor = "white";
+            hintText.innerHTML = "You completed my game";
+            setTimeout(function() {
+                hintText.innerHTML = "I guess you liked it";
+            }, 3000);
+            setTimeout(function() {
+                hintText.innerHTML = "Thanks for playing :)";
+            }, 6000);
+            setTimeout(function() {
+                hintPage.style.display = "none";
+                gamePage.style.display = "none";
+                menuPage.style.display = "flex";
+                gameAniPage.style.display = "none";
+                gameAniPage.style.pointerEvents = "none";
+                timerElement.style.backgroundColor = "white";
+            }, 10000);
+        }
+    }, aniLenght);
 }
 
 document.addEventListener("keydown", function(event) {
     if (levelRunning) {
         console.log("Key pressed:", event.key);
-        if (event.key == 'w') {
-            oldPlayerX = playerX;
-            oldPlayerY = playerY;
-            playerY = playerY - 1;
-            playerX = playerX;
-            if (playerY === -1) {
-                playerY = playerY + 1;
-            }
-            movePlayer()
-        }
-        if (event.key == 's') {
-            oldPlayerX = playerX;
-            oldPlayerY = playerY;
-            playerY = playerY + 1;
-            playerX = playerX;
-            if (playerY === levelSizeY) {
+        if (arrowControls === 1) {
+            if (event.key === 'ArrowUp') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
                 playerY = playerY - 1;
+                playerX = playerX;
+                if (playerY === -1) {
+                    playerY = playerY + 1;
+                }
+                movePlayer()
             }
-            movePlayer()
-        }
-        if (event.key == 'a') {
-            oldPlayerX = playerX;
-            oldPlayerY = playerY;
-            playerY = playerY;
-            playerX = playerX - 1;
-            if (playerX === -1) {
-                playerX = playerX + 1;
+            if (event.key === 'ArrowDown') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY + 1;
+                playerX = playerX;
+                if (playerY === levelSizeY) {
+                    playerY = playerY - 1;
+                }
+                movePlayer()
             }
-            movePlayer()
-        }
-        if (event.key == 'd') {
-            oldPlayerX = playerX;
-            oldPlayerY = playerY;
-            playerY = playerY;
-            playerX = playerX + 1;
-            if (playerX === levelSizeX) {
+            if (event.key === 'ArrowLeft') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY;
                 playerX = playerX - 1;
+                if (playerX === -1) {
+                    playerX = playerX + 1;
+                }
+                movePlayer()
             }
-            movePlayer()
+            if (event.key === 'ArrowRight') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY;
+                playerX = playerX + 1;
+                if (playerX === levelSizeX) {
+                    playerX = playerX - 1;
+                }
+                movePlayer()
+            }
+        } else if (arrowControls === 0) {
+            if (event.key === 'w' || event.key === 'W') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY - 1;
+                playerX = playerX;
+                if (playerY === -1) {
+                    playerY = playerY + 1;
+                }
+                movePlayer()
+            }
+            if (event.key === 's' || event.key === 'S') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY + 1;
+                playerX = playerX;
+                if (playerY === levelSizeY) {
+                    playerY = playerY - 1;
+                }
+                movePlayer()
+            }
+            if (event.key === 'a' || event.key === 'A') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY;
+                playerX = playerX - 1;
+                if (playerX === -1) {
+                    playerX = playerX + 1;
+                }
+                movePlayer()
+            }
+            if (event.key === 'd' || event.key === 'D') {
+                oldPlayerX = playerX;
+                oldPlayerY = playerY;
+                playerY = playerY;
+                playerX = playerX + 1;
+                if (playerX === levelSizeX) {
+                    playerX = playerX - 1;
+                }
+                movePlayer()
+            }
         }
     }
 })
@@ -699,22 +883,27 @@ function checkCollision() {
     if (playerX === winSqrX && playerY === winSqrY) {
         clearInterval(timerId);
         clearInterval(secondId);
-        console.log("You completed the game!");
+        console.log("You completed the level!");
         keyApickedUp = false;
         keyBpickedUp = false;
         timerText.style.color = "black";
-        killPlayer("green");
         if (currentLevel === levelCompleted) {
             levelCompleted = levelCompleted + 1;
             document.getElementById("menu-difficulty").src = "stars/level" + (levelCompleted - 1) + ".png";
             hideButtons();
+        }
+        if (currentLevel === 10) {
+            console.log("you won the game!");
+            killPlayer("yellow",5000);
+        } else {
+            killPlayer("green",2000);
         }
     }
     var playerSqr = document.getElementById(`square-${playerX}-${playerY}`)
     if (playerSqr.className === "square obstacle") {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red");
+        killPlayer("red",2000);
     }
     if (playerSqr.className === "square keyA") {
         document.getElementById("keyA").style.display = "none";
@@ -728,7 +917,7 @@ function checkCollision() {
     if (playerSqr.className === "square keyAgate" && keyApickedUp === false) {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red");
+        killPlayer("red",2000);
     }
     if (playerSqr.className === "square keyB") {
         document.getElementById("keyB").style.display = "none";
@@ -742,16 +931,25 @@ function checkCollision() {
     if (playerSqr.className === "square keyBgate" && keyBpickedUp === false) {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red");
+        killPlayer("red",2000);
     }
     if (playerSqr.classList.contains("uEnemy")) {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red");
+        killPlayer("red",2000);
     }
     if (playerSqr.classList.contains("rEnemy")) {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red");
+        killPlayer("red",2000);
+    }
+    if (playerSqr.classList.contains("hint1")) {
+        hintPage.style.display = "flex";
+        hintText = document.getElementById("hintPage-text");
+
+        hintText.innerHTML = "There might be an fake obstacle...";
+        setTimeout(function() {
+            hintPage.style.display = "none";
+        }, 5000);
     }
 }
