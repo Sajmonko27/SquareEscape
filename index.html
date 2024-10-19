@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacish Man</title>
+    <title>Square Escape</title>
     <link rel="Shortcut Icon" href="logo.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,16 +22,18 @@
     <div id="menu">
         <div id="menu-column">
             <div id="menu-list">
-                <h1>Pacish Man</h1>
-                <img id="menu-difficulty" src="stars/baseplate.png" width="110px">
+                <h1>Square Escape</h1>
+                <img id="menu-difficulty" src="stars/level0.png" width="110px">
                 <h4>Tip: Try adjusting difficulty in settings!</h4>
                 <div id="menu-buttons">
                     <button id="menu-btn-tutorial">Tutorial</button>
                     <button id="menu-btn-levels">Levels</button>
+                    <button id="menu-btn-achievments">Achievments</button>
                     <button id="menu-btn-settings">Settings</button>
                     <button id="menu-btn-credits">Credits</button>
                     <button id="menu-btn-random">Random Level</button>
                 </div>
+                <h4>Also try hard mode!</h4>
             </div>
         </div>
     </div>
@@ -105,6 +107,8 @@
         <div id="settings-column">
             <div id="settings-list">
                 <h1>Settings:</h1>
+                <h5>! Reset Progress button would reset everything, both levels and achievements !</h5>
+                <button id="reset-btn">Reset Progress</button>
                 <div id="settings-subsettings">
                     <div id="settings-difficulty" class="settings-element">
                         <h3 id="difficulty-text">Difficulty: Medium</h3>
@@ -123,35 +127,49 @@
             <button class="menu-btn">Menu</button>
         </div>
     </div>
-    <div id="settings">
-        <div id="settings-column">
-            <div id="settings-list">
-                <h1>Settings:</h1>
-                <div id="settings-subsettings">
-                    <div id="settings-difficulty" class="settings-element">
-                        <h3 id="difficulty-text">Difficulty: Medium</h3>
-                        <input id="difficulty-slider" type="range" min="1" max="3" value="2">
-                    </div>
-                    <div id="settings-opacity" class="settings-element">
-                        <h3 id="opacity-text">Timer opacity: 30%</h3>
-                        <input id="opacity-slider" type="range" min="1" max="100" value="30">
-                    </div>
-                    <div id="settings-keybinds" class="settings-element">
-                        <div class="settings-keybind">
-                            <h3>Move up:</h3>
-                            <input id="opacity-slider" type="range" min="1" max="100" value="30">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="menu-btn">Menu</button>
-        </div>
-    </div>
     <div id="credits">
         <div id="credits-column">
             <div id="credits-list">
                 <h1>Credits:</h1>
                 <h3>This small web game is entirely designed, developed & tested by Simon. Thank you for trying my game :)</h3>
+            </div>
+            <button class="menu-btn">Menu</button>
+        </div>
+    </div>
+    <div id="achievments">
+        <div id="achievments-column">
+            <div id="achievments-list">
+                <h1>Achievments:</h1>
+                <button class="achievment hidden" id="achievmentOne">
+                    <div class="achievment-left">
+                        <img src="achievments/1.png" width="64px">
+                    </div>
+                    <div class="achievment-right">
+                        <h2>Rookie Solver</h2>
+                        <h5>Complete level 10 on easy difficulty</h5>
+                        <p id="achievmentOneDate">Yet to unlock</p>
+                    </div>
+                </button>
+                <button class="achievment hidden" id="achievmentTwo">
+                    <div class="achievment-left">
+                        <img src="achievments/2.png" width="64px">
+                    </div>
+                    <div class="achievment-right">
+                        <h2>Pathfinder</h2>
+                        <h5>Complete level 10 on medium difficulty</h5>
+                        <p id="achievmentTwoDate">Yet to unlock</p>
+                    </div>
+                </button>
+                <button class="achievment hidden" id="achievmentThree">
+                    <div class="achievment-left">
+                        <img src="achievments/3.png" width="64px">
+                    </div>
+                    <div class="achievment-right">
+                        <h2>Escape Pro</h2>
+                        <h5>Complete level 10 on hard difficulty</h5>
+                        <p id="achievmentThreeDate">Yet to unlock</p>
+                    </div>
+                </button>
             </div>
             <button class="menu-btn">Menu</button>
         </div>

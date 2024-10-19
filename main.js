@@ -7,6 +7,8 @@ const tutorialBtn = document.getElementById("menu-btn-tutorial");
 const settingsBtn = document.getElementById("menu-btn-settings");
 const creditsBtn = document.getElementById("menu-btn-credits");
 const randomLevelBtn = document.getElementById("menu-btn-random");
+const achievmentsBtn = document.getElementById("menu-btn-achievments");
+const resetProgressBtn = document.getElementById("reset-btn");
 
 const menuBtns = document.querySelectorAll(".menu-btn");
 
@@ -16,6 +18,7 @@ const levelsPage = document.getElementById("levels");
 const tutorialPage = document.getElementById("tutorial");
 const settingsPage = document.getElementById("settings");
 const creditsPage = document.getElementById("credits");
+const achievmentsPage = document.getElementById("achievments");
 const gameAniPage = document.getElementById("gameAnimation");
 const gameHintPage = document.getElementById("hintPage");
 
@@ -37,12 +40,19 @@ let levelRunning = false;
 let keyApickedUp = false;
 let keyBpickedUp = false;
 
-var levelCompleted = 1;
+let levelCompleted = 1;
 let gameDifficulty = 0.75;
 let timerOpacity = 30;
 let currentLevel = null;
 
 let arrowControls = 0;
+
+let achievmentOne = 0;
+let achievmentOneDate = null;
+let achievmentTwo = 0;
+let achievmentTwoDate = null;
+let achievmentThree = 0;
+let achievmentThreeDate = null;
 
 levels = [
     {
@@ -176,8 +186,8 @@ levels = [
             "...xxxxx.x.x.x.x.x.....x...xv.v.....v.vxxxxx............",
             "...x...x..x.x..x.x.....v...x...........xxxxxx..xxxxxxx..",
             "...x...x.x.x.x.x.x......r..xv.v.....vvv..xxxxx..xxxxx..x",
-            ".p.x...x..x.x..x.x......r..x...........x.xxxxxx..xxx..xx",
-            "...xxxxx.x.x.x.x.x.....u...x.u..xxx....x.lxxxxxx..xxx..x",
+            "...x...x..x.x..x.x......r..x...........x.xxxxxx..xxx..xx",
+            ".p.xxxxx.x.x.x.x.x.....u...x.u..xxx....x.lxxxxxx..xxx..x",
             "...............x.xr..lx....x...x.l.xu.ux.lxxxxxxx..xxx..",
             "...xxxxx...x...x.xr..lxr.r.x..x...l.x..x.lxxxxxxxx..xxx.",
             "...xx.xx..x.x..x.xr..lx.l..x.xvvvx.l.x.x.lxxxxxxxxx.xxx.",
@@ -201,6 +211,7 @@ levels = [
             "..##########...xxxxx.xxxxxx.xxxxxx.....x.xx..xxxxxxx..xx",
             "axxxxxxxxxxxxx..x....xxx..x.xxxxxxuuuu.x.x..xxxxxxx..xxx",
             "xxxxxxxxxxxxxxx...xx.....xx.xxxxxxxxxxxx...xxxxxxx.....w",
+
             
         ]
     },
@@ -209,8 +220,21 @@ levels = [
 // functions:
 // ui functions:
 
+function loadLocalMaxLevel() {
+    const localMaxLevel = localStorage.getItem('localMaxLevel');
+    if (localMaxLevel) {
+        levelCompleted = parseInt(localMaxLevel);
+        console.log('Loaded localMaxLevel:', localMaxLevel);
+        return localMaxLevel;
+    }
+    return null;
+}
+loadLocalMaxLevel()
+
 function hideButtons() {
-    for (var i = levelCompleted + 1; i <= 10; i++) {
+    minHiddenLevel = levelCompleted + 1;
+    document.getElementById("menu-difficulty").src = "stars/level" + (levelCompleted - 1) + ".png";
+    for (var i = minHiddenLevel; i <= 10; i++) {
         var btn = document.getElementById(`levelbtn-${i}`);
         if (btn) {
             btn.className = "hidden";
@@ -226,13 +250,101 @@ function hideButtons() {
     if (levelCompleted > 1) {
         var lastLevel = levelCompleted;
         var lastLevelBtn = document.getElementById(`levelbtn-${lastLevel}`);
-        console.log(lastLevelBtn)
-        lastLevelBtn.className = "start-levelBtn";
-        console.log(levelCompleted)
+        if (lastLevelBtn) {
+            lastLevelBtn.className = "start-levelBtn";
+        }
 
     }
 }
-hideButtons()
+hideButtons();
+
+//achievements saving
+
+function saveAchievment(name,value) {
+    localStorage.setItem(name, value);
+    console.log(name, value);
+}
+
+function currentDate() {
+    const currentDate = new Date();
+    
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    const year = currentDate.getFullYear();
+    
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0'); 
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+function updateAchievments() {
+    //update achievments from local storage
+    let achievmentOneDateElement = document.getElementById("achievmentOneDate")
+    let achievmentTwoDateElement = document.getElementById("achievmentTwoDate")
+    let achievmentThreeDateElement = document.getElementById("achievmentThreeDate")
+
+    if (localStorage.getItem('achievmentOne') == 1) {
+        achievmentOne = 1;
+        achievmentOneDate = localStorage.getItem('achievmentOneDate')
+        achievmentOneDateElement.innerHTML = achievmentOneDate;
+    }
+    if (localStorage.getItem('achievmentTwo') == 1) {
+        achievmentTwo = 1;
+        achievmentTwoDate = localStorage.getItem('achievmentTwoDate')
+        achievmentTwoDateElement.innerHTML = achievmentTwoDate;
+    }
+    if (localStorage.getItem('achievmentThree') == 1) {
+        achievmentThree = 1;
+        achievmentThreeDate = localStorage.getItem('achievmentThreeDate')
+        achievmentThreeDateElement.innerHTML = achievmentThreeDate;
+    }
+
+    if (achievmentOne === 1) {
+        document.getElementById("achievmentOne").classList.remove("hidden");
+        if (achievmentOneDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentOneDate").innerHTML = currentDate()
+            saveAchievment("achievmentOne",1);
+            saveAchievment("achievmentOneDate",currentDate())
+        }
+    }
+    if (achievmentTwo === 1) {
+        document.getElementById("achievmentTwo").classList.remove("hidden");
+        if (achievmentOneDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentOneDate").innerHTML = currentDate();
+            document.getElementById("achievmentOne").classList.remove("hidden");
+            saveAchievment("achievmentOne",1);
+            saveAchievment("achievmentOneDate",currentDate())
+        }
+        if (achievmentTwoDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentTwoDate").innerHTML = currentDate()
+            console.log("completed on med diff")
+            saveAchievment("achievmentTwo",1);
+            saveAchievment("achievmentTwoDate",currentDate())
+        }
+    }
+    if (achievmentThree === 1) {
+        document.getElementById("achievmentThree").classList.remove("hidden");
+        if (achievmentOneDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentOneDate").innerHTML = currentDate()
+            document.getElementById("achievmentOne").classList.remove("hidden");
+            saveAchievment("achievmentOne",1);
+            saveAchievment("achievmentOneDate",currentDate())
+        }
+        if (achievmentTwoDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentTwoDate").innerHTML = currentDate()
+            document.getElementById("achievmentTwo").classList.remove("hidden");
+            saveAchievment("achievmentTwo",1);
+            saveAchievment("achievmentTwoDate",currentDate())
+        }
+        if (achievmentThreeDateElement.innerHTML === "Yet to unlock") {
+            document.getElementById("achievmentThreeDate").innerHTML = currentDate()
+            saveAchievment("achievmentThree",1);
+            saveAchievment("achievmentThreeDate",currentDate())
+        }
+    }
+}
+updateAchievments()
 
 startLvlBtns.forEach(function(lvlBtn) {
     lvlBtn.addEventListener('click', function() {
@@ -244,6 +356,7 @@ startLvlBtns.forEach(function(lvlBtn) {
         console.log("cur" + currentLevel)
         levelsPage.style.display = "none";
         gamePage.style.display = "block";
+        achievmentsPage.style.display = "none";
     });
 });
 
@@ -275,6 +388,17 @@ settingsBtn.addEventListener('click', function() {
 creditsBtn.addEventListener('click', function() {
     menuPage.style.display = "none";
     creditsPage.style.display = "flex";
+})
+
+achievmentsBtn.addEventListener('click', function() {
+    menuPage.style.display = "none";
+    achievmentsPage.style.display = "flex";
+})
+
+resetProgressBtn.addEventListener('click', function() {
+    localStorage.clear();
+    console.log('All progress has been reset.');
+    location.reload();
 })
 
 // settings functions 
@@ -460,11 +584,34 @@ function drawLevel(level) {
     //drawEnd();
 }
 
+function checkSurroundings(randomX,randomY) {
+    const topLeft = document.getElementById(`square-${randomX - 1}-${randomY - 1}`); 
+    topLeft && (topLeft.style.backgroundColor = "white", topLeft.className = "square");
+    const topMid = document.getElementById(`square-${randomX}-${randomY - 1}`); 
+    topMid && (topMid.style.backgroundColor = "white", topMid.className = "square");
+    const topRight = document.getElementById(`square-${randomX + 1}-${randomY - 1}`); 
+    topRight && (topRight.style.backgroundColor = "white", topRight.className = "square");
+
+    const midLeft = document.getElementById(`square-${randomX - 1}-${randomY}`); 
+    midLeft && (midLeft.style.backgroundColor = "white", midLeft.className = "square");
+    const midMid = document.getElementById(`square-${randomX}-${randomY}`).className = "square winSquare"; 
+    const midRight = document.getElementById(`square-${randomX + 1}-${randomY}`); 
+    midRight && (midRight.style.backgroundColor = "white", midRight.className = "square");
+
+    const botLeft = document.getElementById(`square-${randomX - 1}-${randomY + 1}`); 
+    botLeft && (botLeft.style.backgroundColor = "white", botLeft.className = "square");
+    const botMid = document.getElementById(`square-${randomX}-${randomY + 1}`); 
+    botMid && (botMid.style.backgroundColor = "white", botMid.className = "square");
+    const botRight = document.getElementById(`square-${randomX + 1}-${randomY + 1}`); 
+    botRight && (botRight.style.backgroundColor = "white", botRight.className = "square");
+}
+
 function randomLevelGenerator() {
     levelsPage.style.display = "none";
     gamePage.style.display = "block";
     xLimit = Math.floor(Math.random() * (32 - 10 + 1)) + 10;
-    yLimit = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+    yLimit = Math.floor(Math.random() * (24 - 10 + 1)) + 10;
+    currentLevel = 9;
     for (y = 0; y < yLimit;y++) {
         const rowElement = document.createElement('div');
         rowElement.className = "row";
@@ -480,7 +627,7 @@ function randomLevelGenerator() {
         }
     }
 
-    obstacles = Math.floor(Math.random() * (100 - 10 + 1)) + 10;
+    obstacles = Math.floor(Math.random() * (100 - 10 + 1)) + 50;
 
     winGenerated = false;
 
@@ -495,6 +642,7 @@ function randomLevelGenerator() {
             randomSquare.classList.add("winSquare");
             winSqrX = randomX;
             winSqrY = randomY;
+            checkSurroundings(randomX,randomY);
         } else if (randomSquare && randomNum === 1) {
             randomSquare.style.backgroundColor = "red";
             randomSquare.classList.add("uEnemy");
@@ -513,6 +661,7 @@ function randomLevelGenerator() {
     document.getElementById("square-1-3").style.backgroundColor = "green";
     playerX = 1;
     playerY = 3;
+    checkSurroundings(playerX,playerY);
     levelRunning = true;
 
     var timerText = document.getElementById("timerText");
@@ -533,6 +682,7 @@ function randomLevelGenerator() {
 randomLevelBtn.addEventListener('click', function() {
     menuPage.style.display = "none";
     gamePage.style.display = "flex";
+    achievmentsPage.style.display = "none";
     randomLevelGenerator()
 })
 
@@ -573,7 +723,7 @@ function gameClock(t) {
             if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("U")) {
                 console.log("found U element!");
                 if (playerX === startX && playerY === startY - 1) {
-                    killPlayer("red",2000);
+                    killPlayer("red",1000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died"); 
@@ -594,7 +744,7 @@ function gameClock(t) {
             } else if (enemyStartElement.classList.contains("uEnemy") && enemyStartElement.classList.contains("D")) {
                 console.log("found D element!");
                 if (playerX === startX && playerY === startY + 1) {
-                    killPlayer("red",2000);
+                    killPlayer("red",1000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died")
@@ -626,7 +776,7 @@ function gameClock(t) {
             if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("R")) {
                 console.log("found U element!");
                 if (playerX === startX + 1 && playerY === startY) {
-                    killPlayer("red",2000);
+                    killPlayer("red",1000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died"); 
@@ -646,7 +796,7 @@ function gameClock(t) {
             } else if (enemyStartElement.classList.contains("rEnemy") && enemyStartElement.classList.contains("L")) {
                 console.log("found D element!");
                 if (playerX === startX - 1 && playerY === startY) {
-                    killPlayer("red",2000);
+                    killPlayer("red",1000);
                     clearInterval(timerId);
                     clearInterval(secondId);
                     console.log("player died")
@@ -673,7 +823,7 @@ function gameClock(t) {
         remainingTime--;
 
         if (remainingTime < 0) {
-            killPlayer("red",2000);;
+            killPlayer("red",1000);;
             clearInterval(timerId);
             clearInterval(secondId);
             var timerText = document.getElementById("timerText");
@@ -708,7 +858,6 @@ function movePlayer() {
             document.getElementById("timer").style.opacity = "1";
         }
     }
-
 }
 
 function killPlayer (color,aniLenght) {
@@ -763,7 +912,28 @@ function killPlayer (color,aniLenght) {
             hintMessageRect = document.getElementById("hintPage-message");
             hintMessageRect.style.filter = "none";
             hintMessageRect.style.backgroundColor = "white";
-            hintText.innerHTML = "You completed my game";
+            let difficultyName = null;
+            if (gameDifficulty === 1) {
+                achievmentOne = 1;
+                difficultyName = "easy";
+                console.log("completed achievment one")
+                updateAchievments()
+            } else if (gameDifficulty === 0.75) {
+                achievmentOne = 1;
+                achievmentTwo = 1;
+                difficultyName = "medium";
+                console.log("completed achievment two")
+                updateAchievments()
+            } else if (gameDifficulty === 0.5) {
+                achievmentOne = 1;
+                achievmentTwo = 1;
+                achievmentThree = 1;
+                difficultyName = "hard";
+                console.log("completed achievment three")
+                updateAchievments()
+            }
+            hintText.innerHTML = "You completed Square Escape on " + difficultyName + " difficulty";
+
             setTimeout(function() {
                 hintText.innerHTML = "I guess you liked it";
             }, 3000);
@@ -773,11 +943,12 @@ function killPlayer (color,aniLenght) {
             setTimeout(function() {
                 hintPage.style.display = "none";
                 gamePage.style.display = "none";
-                menuPage.style.display = "flex";
+                achievmentsPage.style.display = "flex";
                 gameAniPage.style.display = "none";
                 gameAniPage.style.pointerEvents = "none";
                 timerElement.style.backgroundColor = "white";
             }, 10000);
+
         }
     }, aniLenght);
 }
@@ -889,21 +1060,21 @@ function checkCollision() {
         timerText.style.color = "black";
         if (currentLevel === levelCompleted) {
             levelCompleted = levelCompleted + 1;
-            document.getElementById("menu-difficulty").src = "stars/level" + (levelCompleted - 1) + ".png";
+            localStorage.setItem("localMaxLevel",levelCompleted)
             hideButtons();
         }
         if (currentLevel === 10) {
             console.log("you won the game!");
             killPlayer("yellow",5000);
         } else {
-            killPlayer("green",2000);
+            killPlayer("green",1000);
         }
     }
     var playerSqr = document.getElementById(`square-${playerX}-${playerY}`)
     if (playerSqr.className === "square obstacle") {
         clearInterval(timerId);
         clearInterval(secondId);
-        killPlayer("red",2000);
+        killPlayer("red",1000);
     }
     if (playerSqr.className === "square keyA") {
         document.getElementById("keyA").style.display = "none";
