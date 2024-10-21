@@ -454,9 +454,29 @@ controlsBtn.addEventListener('click', updateControls);
 
 // game functions
 
+let hintTimerId;
+
 function drawLevel(level) {
-    console.log(level)
+    console.log("lvl = " + level.levelNum)
     console.log(level.cords.length)
+
+    if (level.levelNum === 1) {
+        hintPage.style.display = "flex";
+        hintText = document.getElementById("hintPage-text");
+        hintMessageRect = document.getElementById("hintPage-message");
+        hintMessageRect.style.filter = "none";
+        hintMessageRect.style.backgroundColor = "white";
+        let controlSchemeText = "Error"
+        if (arrowControls === 1) {
+            controlSchemeText = "ArrowKeys";
+        } else if (arrowControls === 0) {
+            controlSchemeText = "WSAD";
+        }
+        hintText.innerHTML = "Use " + controlSchemeText + " to move!";
+        hintTimerId = setInterval(function() {
+            hintPage.style.display = "none";
+        }, 3000);
+    }
 
     for (y = 0; y < level.cords.length;y++) {
         let row = level.cords[y];
@@ -906,6 +926,8 @@ function killPlayer (color,aniLenght) {
             gameAniPage.style.display = "none";
             gameAniPage.style.pointerEvents = "none";
             timerElement.style.backgroundColor = "white";
+            hintPage.style.display = "none";
+            clearInterval(hintTimerId);
         } else {
             hintPage.style.display = "flex";
             hintText = document.getElementById("hintPage-text");
