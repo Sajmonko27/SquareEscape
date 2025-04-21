@@ -1,3 +1,4 @@
+// Game buttons
 const startLvlBtns = document.querySelectorAll(".start-levelBtn");
 
 const timerElement = document.getElementById("timer");
@@ -12,6 +13,7 @@ const resetProgressBtn = document.getElementById("reset-btn");
 
 const menuBtns = document.querySelectorAll(".menu-btn");
 
+// Page changes
 const gamePage = document.getElementById("game");
 const menuPage = document.getElementById("menu");
 const levelsPage = document.getElementById("levels");
@@ -22,31 +24,47 @@ const achievmentsPage = document.getElementById("achievments");
 const gameAniPage = document.getElementById("gameAnimation");
 const gameHintPage = document.getElementById("hintPage");
 
+// Player positioning
 var playerX = null;
 var playerY = null;
 
 var oldPlayerX = null;
 var oldPlayerY = null;
 
+// Win square position
 let winSqrX = null;
 let winSqrY = null;
 
+// Level size used for generation
 let levelSizeX = null;
 let levelSizeY = null;
 
+// Game start
 var firstTurn = true;
 let levelRunning = false;
 
+// Keys picked up?
 let keyApickedUp = false;
 let keyBpickedUp = false;
 
+// Game config
 let levelCompleted = 1;
-let gameDifficulty = 0.75;
+let arrowControls = 0;
 let timerOpacity = 30;
+/* Game difficulty explained:
+EASY = 1
+MEDIUM = 0.75
+Hard = 0.5
+
+each is a multiplayer added to the level timeLimit variable
+e.g. 60s level is gonna be
+60s on easy
+45s on medium
+30s on hard */
+let gameDifficulty = 0.75;
 let currentLevel = null;
 
-let arrowControls = 0;
-
+// Player achievments
 let achievmentOne = 0;
 let achievmentOneDate = null;
 let achievmentTwo = 0;
@@ -54,6 +72,29 @@ let achievmentTwoDate = null;
 let achievmentThree = 0;
 let achievmentThreeDate = null;
 
+/* These are levels, feel free to edit and design your own. Each level needs a levelNum, timeLimit (in seconds) and cords.
+LEGEND:
+. = white square (empty)
+x = black square (obstacle)
+p = player starting position
+w = win position (yellow square)
+
+# = fakeObstacle (blackSquare that doesn't kill)
+KEYS:
+a = key A square (the square with key img)
+b = key A gate (the square with X on it)
+
+c = key B square
+d = key B gate
+
+? = hint square (only used in last level, displays the hint message)
+
+ENEMIES:
+u = up enemy. Moves one square up from its starting position.
+v = down enemy.
+r = right enemy
+l = left enemy
+*/
 levels = [
     {
         levelNum: 1,
@@ -217,8 +258,8 @@ levels = [
     },
 ];
 
-// functions:
-// ui functions:
+// GAME FUNCTIONS:
+// Achievment functions:
 
 function loadLocalMaxLevel() {
     const localMaxLevel = localStorage.getItem('localMaxLevel');
@@ -230,6 +271,8 @@ function loadLocalMaxLevel() {
     return null;
 }
 loadLocalMaxLevel()
+
+// Hide locked buttons. Sets locked button className to hidden
 
 function hideButtons() {
     minHiddenLevel = levelCompleted + 1;
@@ -344,7 +387,10 @@ function updateAchievments() {
         }
     }
 }
+// initial load
 updateAchievments()
+
+// Buttons level1, level2, level3 etc. that run drawLevel func
 
 startLvlBtns.forEach(function(lvlBtn) {
     lvlBtn.addEventListener('click', function() {
@@ -359,6 +405,8 @@ startLvlBtns.forEach(function(lvlBtn) {
         achievmentsPage.style.display = "none";
     });
 });
+
+// Menu buttons display changes:
 
 levelsBtn.addEventListener('click', function() {
     menuPage.style.display = "none";
@@ -401,7 +449,7 @@ resetProgressBtn.addEventListener('click', function() {
     location.reload();
 })
 
-// settings functions 
+// Settings functions 
 
 const difSlider = document.getElementById('difficulty-slider');
 const difText = document.getElementById('difficulty-text');
@@ -427,6 +475,7 @@ difSlider.addEventListener('input', updateDifficulty);
 const opaSlider = document.getElementById('opacity-slider');
 const opaText = document.getElementById('opacity-text');
 
+// Opacity for top left timer element in game
 function updateOpacity() {
     const value = opaSlider.value;
     opaText.textContent = 'Timer opacity: ' + value + "%";
@@ -452,7 +501,7 @@ function updateControls() {
 
 controlsBtn.addEventListener('click', updateControls);
 
-// game functions
+// Game functions
 
 let hintTimerId;
 
@@ -479,6 +528,7 @@ function drawLevel(level) {
     }
 
     for (y = 0; y < level.cords.length;y++) {
+        // draw each row
         let row = level.cords[y];
         const rowElement = document.createElement('div');
         rowElement.className = "row";
@@ -486,6 +536,7 @@ function drawLevel(level) {
         gamePage.appendChild(rowElement);
         levelSizeY = level.cords.length;
         for (x = 0; x < row.length; x++) {
+            // in each row add squares
             let symbol = row[x];
             const square = document.createElement('div');
             square.className = "square";
@@ -596,14 +647,12 @@ function drawLevel(level) {
         timerElement.appendChild(timerText);
     }
 
-
-
+    // Start game clock
     levelRunning = true;
     gameClock(level.timeLimit * gameDifficulty);
-    //drawPlayer();
-    //drawEnd();
 }
 
+// CheckSurronding func fixes a levelGenerator bug, where a player could spawn in an enemy block or next to it.
 function checkSurroundings(randomX,randomY) {
     const topLeft = document.getElementById(`square-${randomX - 1}-${randomY - 1}`); 
     topLeft && (topLeft.style.backgroundColor = "white", topLeft.className = "square");
@@ -626,6 +675,7 @@ function checkSurroundings(randomX,randomY) {
     botRight && (botRight.style.backgroundColor = "white", botRight.className = "square");
 }
 
+// Random level function
 function randomLevelGenerator() {
     levelsPage.style.display = "none";
     gamePage.style.display = "block";
@@ -708,10 +758,12 @@ randomLevelBtn.addEventListener('click', function() {
 
 let timerId, secondId;
 
+// Game clock tick function
 function gameClock(t) {
     console.log(t);
     let remainingTime = t * 100;
 
+    // Colors to timer
     function updateTimer() {
         let seconds = Math.floor(remainingTime / 100);
         let hundreds = remainingTime % 100;
@@ -729,6 +781,7 @@ function gameClock(t) {
         }
     }
 
+    // Tick function for the game, run each second
     function runEverySecond() {
         console.log("running every second!")
         let uEnemies = document.querySelectorAll(".uEnemy");
@@ -838,6 +891,7 @@ function gameClock(t) {
         });
     }
 
+    // Outside tick function to update the timer. Otherwise timer would run each second.
     timerId = setInterval(function() {
         updateTimer();
         remainingTime--;
@@ -854,6 +908,7 @@ function gameClock(t) {
     secondId = setInterval(runEverySecond, 1000);
 }
 
+// Move player func
 function movePlayer() {
     if (levelRunning) {
         checkCollision()
@@ -880,6 +935,7 @@ function movePlayer() {
     }
 }
 
+// Kill player function ends the level, both win or lose wise. 
 function killPlayer (color,aniLenght) {
     timerText = document.getElementById("timerText")
     timerText.style.color = "black";
@@ -975,6 +1031,7 @@ function killPlayer (color,aniLenght) {
     }, aniLenght);
 }
 
+// Listen for player inputs
 document.addEventListener("keydown", function(event) {
     if (levelRunning) {
         console.log("Key pressed:", event.key);
@@ -1064,14 +1121,7 @@ document.addEventListener("keydown", function(event) {
     }
 })
 
-//function drawEnd(){
-//    let endYPosition = Math.floor(Math.random() * 10) + 1;
-//    console.log(endYPosition);
-//    const endElement = document.getElementById(`square-20-${endYPosition}`)
-//    endElement.style.backgroundColor = "yellow";
-//    winSqrY = endYPosition;
-//}
-
+// Check what does player position square equal to
 function checkCollision() {
     if (playerX === winSqrX && playerY === winSqrY) {
         clearInterval(timerId);
@@ -1102,10 +1152,6 @@ function checkCollision() {
         document.getElementById("keyA").style.display = "none";
         keyApickedUp = true;
         document.getElementById("gateA").style.display = "none";
-        //let gateELements = document.getElementsByClassName("square keyAgate");
-        //for (let i = 0; i < gateELements.length; i++) {
-        //    gateELements[i].style.backgroundColor = "white";
-        //}
     }
     if (playerSqr.className === "square keyAgate" && keyApickedUp === false) {
         clearInterval(timerId);
@@ -1116,10 +1162,6 @@ function checkCollision() {
         document.getElementById("keyB").style.display = "none";
         keyBpickedUp = true;
         document.getElementById("gateB").style.display = "none";
-        //let gateELements = document.getElementsByClassName("square keyAgate");
-        //for (let i = 0; i < gateELements.length; i++) {
-        //    gateELements[i].style.backgroundColor = "white";
-        //}
     }
     if (playerSqr.className === "square keyBgate" && keyBpickedUp === false) {
         clearInterval(timerId);

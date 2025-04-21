@@ -247,7 +247,8 @@
     flex-direction: column;
 }
 #credits-list h3 {
-    text-align: center;
+    width: 32rem;
+    text-align: left;
 }
 /* achievments */
 
